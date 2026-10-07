@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
-import { MaterialIcons } from "@expo/vector-icons";
-import { Text, View, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { useState } from "react";
+
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  View,
+} from "react-native";
+
 import { useApi } from "../components/api.js";
+
 import { styles } from "../components/color.js";
+
 import { BotonFecha } from "../components/fecha.js";
 
 export default function Index() {
+
   const hoy = new Date();
 
   const [fecha, setFecha] = useState(
@@ -17,15 +26,18 @@ export default function Index() {
   return (
     <View style={styles.container}>
 
-      <View style={styles.encabezado}>
+      <text style={styles.encabezado}>
 
         <Text style={styles.titulo}>
           NASA API
         </Text>
 
-        <BotonFecha onFechaChange={setFecha} />
+        <BotonFecha
+          fecha={fecha}
+          setFecha={setFecha}
+        />
 
-      </View>
+      </text>
 
       {datos ? (
         <>

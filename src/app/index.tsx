@@ -1,67 +1,77 @@
 import { useState } from "react";
-
 import {
   ActivityIndicator,
   Image,
   Text,
   View,
+  Button,
+  ScrollView
 } from "react-native";
-
-import { useApi } from "../components/api.js";
-
-import { styles } from "../components/color.js";
-
-import { BotonFecha } from "../components/fecha.js";
+import { useApi } from "../hooks/api.jsx";
+import { styles } from "../components/color.jsx";
+import { BotonFecha } from "../components/fecha.jsx";
 
 export default function Index() {
-
-  const hoy = new Date();
-
-  const [fecha, setFecha] = useState(
-    hoy.toISOString().split("T")[0]
-  );
-
+  const [mostrar, setMostrar] = useState(false);
+  const [fecha, setFecha] = useState(new Date());
   const { datos } = useApi(fecha);
 
+  function limpiarTexto(texto) {
+    return texto.replace(/<[^>]*>/g, "");
+  }
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.Scrol}>
+      <View style={styles.container}>
 
-      <text style={styles.encabezado}>
-
-        <Text style={styles.titulo}>
-          NASA API
+        <Text style={styles.encabezado}>
+          <Text style={styles.titulo}>
+            NASA API
+          </Text>
         </Text>
 
-        <BotonFecha
-          fecha={fecha}
-          setFecha={setFecha}
-        />
+        {datos ? (
+          <>
+            <View style={styles.contenedorFecha}>
 
-      </text>
+              {!mostrar && (
+                <Button
+                  title="YYYY/MM/DD"
+                  onPress={() => setMostrar(true)}
+                />
+              )}
 
-      {datos ? (
-        <>
-          <Text style={styles.nombre}>
-            {datos.title}
-          </Text>
+              {mostrar && (
+                <BotonFecha
+                  fecha={fecha}
+                  setFecha={setFecha}
+                />
+              )}
 
-          <View style={styles.contenido}>
+            </View>
 
-            <Image
-              source={{ uri: datos.hdurl }}
-              style={styles.imagen}
-            />
+            <View style={styles.contenido}>
 
-            <Text style={styles.text}>
-              {datos.explanation}
-            </Text>
+              <Text style={styles.nombre}>
+                {datos.title}
+              </Text>
 
-          </View>
-        </>
-      ) : (
-        <ActivityIndicator size="large" />
-      )}
+              <Image
+                source={{ uri: datos.hdurl }}
+                style={styles.imagen}
+              />
 
-    </View>
+              <Text style={styles.text}>
+                {limpiarTexto(datos.explanation)}
+              </Text>
+
+            </View>
+          </>
+        ) : (
+          <ActivityIndicator size="large" />
+        )}
+
+      </View>
+    </ScrollView>
   );
 }

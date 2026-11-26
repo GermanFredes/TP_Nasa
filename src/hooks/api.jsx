@@ -1,35 +1,44 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useState } from 'react';
 
 export function useApi(fecha) {
   const [datos, setDatos] = useState(null);
+  const [error, setError] = useState(null);
+  const [intento, setIntento] = useState(0);
+  const [cargando, setCargando] = useState(true);
+
+  const reintentar = () => setIntento((prev) => prev + 1);
 
   useEffect(() => {
     async function obtenerDatos() {
       try {
-        const fechaApi = fecha.toISOString().split("T")[0];
+        setCargando(true);
+        setError(null);
 
-        const respuesta = await fetch(
-          `https://science.nasa.gov/wp-json/wp/v2/apod-basic?date=${fechaApi}`
-        );
+        const fechaNASA = `${String(fecha.getFullYear()).slice(-2)}${String(fecha.getMonth() + 1).padStart(2, "0")}${String(fecha.getDate()).padStart(2, "0")}`;
 
-        const respuestaApi = await respuesta.json();
+        const url = `https://science.nasa.gov/wp-json/wp/v2/apod-basic/${fechaNASA}`;
 
-        if (Array.isArray(respuestaApi)) {
-          const dato = respuestaApi.find(
-            (item) => item.date === fechaApi
-          );
+        const respuesta = await fetch(url);
 
-          setDatos(dato);
-        } else {
-          setDatos(respuestaApi);
+        if (!respuesta.ok) {
+          throw new Error(`Error HTTP: ${respuesta.status}`);
         }
+
+        setDatos(await respuesta.json());
+
+        
       } catch (error) {
-        console.log("ERROR:", error);
+        setError(error.message);
+
+      } finally {
+        setCargando(false);
       }
     }
 
     obtenerDatos();
-  }, [fecha]);
 
-  return { datos };
+  }, [fecha, intento]);
+
+  return { datos, error, reintentar, cargando };
 }

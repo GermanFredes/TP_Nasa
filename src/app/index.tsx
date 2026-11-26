@@ -5,72 +5,91 @@ import {
   Text,
   View,
   Button,
-  ScrollView
+  ScrollView,
+  Pressable,
 } from "react-native";
+
 import { useApi } from "../hooks/api.jsx";
 import { styles } from "../components/color.jsx";
 import { BotonFecha } from "../components/fecha.jsx";
+import { VisorImagen } from "../components/visorImagen.jsx";
 
 export default function Index() {
   const [mostrar, setMostrar] = useState(false);
+  const [mostrarImagen, setMostrarImagen] = useState(false);
   const [fecha, setFecha] = useState(new Date());
-  const { datos } = useApi(fecha);
+
+  const { datos, error, reintentar, cargando } = useApi(fecha);
 
   function limpiarTexto(texto) {
-    return texto.replace(/<[^>]*>/g, "");
+    return texto
+      .replace(/<[^>]*>/g, "")
+      .replace(/Explanation:/, "")
+      .replace(/Tomorrow's picture:.*/s, "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   return (
-    <ScrollView style={styles.Scrol}>
+    <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-
-        <Text style={styles.encabezado}>
-          <Text style={styles.titulo}>
-            NASA API
-          </Text>
+        <Text style={[styles.encabezado, styles.titulo]}>
+          NASA API
         </Text>
 
-        {datos ? (
+        <View style={styles.contenedorFecha}>
+          {mostrar ? (
+            <BotonFecha fecha={fecha} setFecha={setFecha} />
+          ) : (
+            <Button
+              title="YYYY/MM/DD"
+              onPress={() => setMostrar(true)}
+            />
+          )}
+        </View>
+
+        {cargando ? (
+          <ActivityIndicator size="large" />
+        ) : error ? (
+          <View>
+            <Text style={styles.text}>
+              Error al consultar NASA: {error}
+            </Text>
+
+            <Button title="Reintentar" onPress={reintentar} />
+          </View>
+        ) : datos ? (
           <>
-            <View style={styles.contenedorFecha}>
-
-              {!mostrar && (
-                <Button
-                  title="YYYY/MM/DD"
-                  onPress={() => setMostrar(true)}
-                />
-              )}
-
-              {mostrar && (
-                <BotonFecha
-                  fecha={fecha}
-                  setFecha={setFecha}
-                />
-              )}
-
-            </View>
-
             <View style={styles.contenido}>
-
               <Text style={styles.nombre}>
                 {datos.title}
               </Text>
 
-              <Image
-                source={{ uri: datos.hdurl }}
-                style={styles.imagen}
-              />
+              <Pressable onPress={() => setMostrarImagen(true)}>
+                <Image
+                  source={{ uri: datos.hdurl }}
+                  style={styles.imagen}
+                />
+              </Pressable>
 
-              <Text style={styles.text}>
-                {limpiarTexto(datos.explanation)}
-              </Text>
+              <View style={styles.explicacion}>
+                <Text style={styles.tituloExplicacion}>
+                  Descripción
+                </Text>
 
+                <Text style={styles.text}>
+                  {limpiarTexto(datos.explanation)}
+                </Text>
+              </View>
             </View>
-          </>
-        ) : (
-          <ActivityIndicator size="large" />
-        )}
 
+            <VisorImagen
+              visible={mostrarImagen}
+              imagen={datos.hdurl}
+              cerrar={() => setMostrarImagen(false)}
+            />
+          </>
+        ) : null}
       </View>
     </ScrollView>
   );

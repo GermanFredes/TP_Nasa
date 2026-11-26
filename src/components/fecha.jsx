@@ -1,54 +1,66 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from "react-native";
+import { styles } from "./color";
+
 export function BotonFecha({ fecha, setFecha }) {
-  const añoActual = new Date(fecha).getFullYear();
-  const mesActual = new Date(fecha).getMonth() + 1;
+  const añoActual = fecha.getFullYear();
+  const mesActual = fecha.getMonth() + 1;
+
+  const fechaMinima = new Date(1995, 5, 16);
+  const fechaMaxima = new Date();
 
   const [indice, setIndice] = useState(añoActual);
   const [indice_m, setIndice_m] = useState(mesActual);
 
-  function restar_indice() {
-    setIndice(indice - 1);
-  }
+  useEffect(() => {
+    setIndice(fecha.getFullYear());
+    setIndice_m(fecha.getMonth() + 1);
+  }, [fecha]);
 
-  function sumar_indice() {
-    if (indice < 2026) {
-      setIndice(indice + 1);
+  function cambiarMes(cantidad) {
+    const nuevaFecha = new Date(indice, indice_m - 1 + cantidad, 1);
+
+    const mesMinimo = new Date(
+      fechaMinima.getFullYear(),
+      fechaMinima.getMonth(),
+      1
+    );
+
+    const mesMaximo = new Date(
+      fechaMaxima.getFullYear(),
+      fechaMaxima.getMonth(),
+      1
+    );
+
+    if (nuevaFecha < mesMinimo || nuevaFecha > mesMaximo) {
+      return;
     }
+
+    setIndice(nuevaFecha.getFullYear());
+    setIndice_m(nuevaFecha.getMonth() + 1);
   }
 
-  function restar_mes() {
-    if (indice_m > 1) {
-      setIndice_m(indice_m - 1);
-    }
+  let cantidadDias = new Date(indice, indice_m, 0).getDate();
+
+  if (
+    indice === fechaMaxima.getFullYear() && indice_m === fechaMaxima.getMonth() + 1) {
+    cantidadDias = fechaMaxima.getDate();
   }
-
-  function sumar_mes() {
-    if (indice_m < 12) {
-      setIndice_m(indice_m + 1);
-    }
-  }
-
-  const cantidadDias = new Date(indice, indice_m, 0).getDate();
-
   let dias = [];
 
-  function generarDias(dias) {
-    for (let i = 1; i <= cantidadDias; i++) {
-      dias.push(i);
-    }
+  for (let i = 1; i <= cantidadDias; i++) {
+  dias.push(i);
   }
 
   function seleccionarDia(dia) {
     const nuevaFecha = new Date(indice, indice_m - 1, dia);
 
-    console.log("DIA:", dia);
-    console.log("FECHA:", nuevaFecha);
+    if (nuevaFecha < fechaMinima || nuevaFecha > fechaMaxima) {
+      return;
+    }
 
     setFecha(nuevaFecha);
   }
-
-  generarDias(dias);
 
   return (
     <View style={styles.botonFecha}>
@@ -56,9 +68,11 @@ export function BotonFecha({ fecha, setFecha }) {
       <View style={styles.component}>
 
         <Pressable
-          onPress={restar_indice}
+          onPress={() => cambiarMes(-12)}
           style={styles.component_button}>
-          <Text>{"<"}</Text>
+          <Text style={styles.flecha}>
+            {"<"}
+          </Text>
         </Pressable>
 
         <Text>
@@ -66,15 +80,17 @@ export function BotonFecha({ fecha, setFecha }) {
         </Text>
 
         <Pressable
-          onPress={sumar_indice}
+          onPress={() => cambiarMes(12)}
           style={styles.component_button}>
-          <Text>{">"}</Text>
+          <Text style={styles.flecha}>
+            {">"}
+          </Text>
         </Pressable>
 
         <View style={styles.component_meses}>
 
           <Pressable
-            onPress={restar_mes}
+            onPress={() => cambiarMes(-1)}
             style={styles.component_button}>
             <Text>{"<"}</Text>
           </Pressable>
@@ -84,7 +100,7 @@ export function BotonFecha({ fecha, setFecha }) {
           </Text>
 
           <Pressable
-            onPress={sumar_mes}
+            onPress={() => cambiarMes(1)}
             style={styles.component_button}>
             <Text>{">"}</Text>
           </Pressable>
@@ -95,10 +111,13 @@ export function BotonFecha({ fecha, setFecha }) {
 
       <View style={styles.component_dias}>
         {dias.map((dia) => {
+          const diaFecha = new Date(indice, indice_m - 1, dia);
+
           return (
             <Pressable
               onPress={() => seleccionarDia(dia)}
               key={dia}
+              disabled={diaFecha < fechaMinima || diaFecha > fechaMaxima}
               style={styles.dia}>
               <Text>{dia}</Text>
             </Pressable>

@@ -1,64 +1,83 @@
-import { StyleSheet, Dimensions } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: "#0B1D3A", // Azul oscuro/espacial de mejor contraste
-  },
-  container: {
     backgroundColor: "#0B1D3A",
+  },
+
+  container: {
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 50,
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
-  headerRow: {
+
+  encabezado: {
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
+
   titulo: {
     color: "#FFFFFF",
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "bold",
+    letterSpacing: 2,
   },
+
   contenido: {
     width: "100%",
     alignItems: "center",
   },
+
   nombre: {
     color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "600",
-    textAlign: "center",
-    marginVertical: 15,
+    fontSize: 20,
+    fontWeight: "700",
+    marginVertical: 14,
+    letterSpacing: 0.3,
+    lineHeight: 28,
   },
+
   imagen: {
-    width: width - 40,
-    height: (width - 40) * 0.75,
-    borderRadius: 8,
+    width: "100%",
+    aspectRatio: 4 / 3,
+    borderRadius: 12,
     resizeMode: "cover",
+    backgroundColor: "#14243D",
   },
+
+  explicacion: {
+    width: "100%",
+    marginTop: 28,
+  },
+
+  tituloExplicacion: {
+    color: "#FFFFFF",
+    fontSize: 21,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+
   text: {
     color: "#E2E8F0",
-    fontSize: 15,
-    lineHeight: 24,
-    textAlign: "justify",
-    marginTop: 20,
+    fontSize: 14,
+    lineHeight: 23,
+    marginTop: 10,
+    letterSpacing: 0.1,
   },
+
   contenedorFecha: {
     zIndex: 10,
   },
+
   botonFecha: {
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
     padding: 10,
     elevation: 4,
   },
+
   component: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -66,29 +85,81 @@ export const styles = StyleSheet.create({
     gap: 5,
     marginBottom: 10,
   },
+
   component_button: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    width: 34,
+    height: 34,
     backgroundColor: "#E2E8F0",
-    borderRadius: 4,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
+
   component_meses: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
   },
+
   component_dias: {
-    width: 210,
+    width: 200,
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 2,
   },
+
   dia: {
-    backgroundColor: "#EDF2F7",
-    paddingVertical: 6,
+    backgroundColor: "#E8EEF6",
+    paddingVertical: 5,
     width: "13%",
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  flecha: {
+    fontSize: 18,
     textAlign: "center",
-    borderRadius: 3,
-    fontSize: 12,
+    textAlignVertical: "center",
+    includeFontPadding: false,
+    lineHeight: 22,
+  },
+
+  visorImagen: {
+    flex: 1,
+    backgroundColor: "#101A2B",
+  },
+
+  imagenAmpliada: {
+    width: "100%",
+    flex: 1,
+    resizeMode: "contain",
+  },
+
+  barraSuperior: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  botonDescargar: {
+    padding: 10,
+  },
+
+  textoDescargar: {
+    fontSize: 28,
+  },
+
+  botonCerrar: {
+    padding: 10,
+  },
+
+  textoCerrar: {
+    color: "#FFFFFF",
+    fontSize: 32,
   },
 });
